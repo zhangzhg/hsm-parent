@@ -38,6 +38,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ICodeMessage login(UserDto user) {
         ApiJsonResult ajr=new ApiJsonResult();
+        //登录手机号码不能为空
         if(StringUtils.isEmpty(user.getPhone())||StringUtils.isEmpty(user.getPwd())) {
             ajr.setResult(ApiJsonResultEnum.LACK_PARAM);
             return ajr;
@@ -46,12 +47,15 @@ public class UserServiceImpl implements IUserService {
         Integer status = ApiDicDataEnum.REG_SUCCESS.getIntId();
         User userEntity = userRepository.getByPhoneAndStatus(user.getPhone(), status);
 
+        //判断手机号码是否存在，不存在直接返回
         if(userEntity==null) {
             ajr.setResult(ApiJsonResultEnum.NO_REGISTER);
             return ajr;
         }
 
+        //密码相同的话可以登录
         if(MD5Utils.encrypt(user.getPwd()).equals(userEntity.getPwd())) {
+            //删除掉上次登录信息
             ApiCurrUserInfo currUserInfo=new ApiCurrUserInfo();
             currUserInfo.setUserId(userEntity.getId());
             currUserInfo.setName(userEntity.getName());
@@ -60,11 +64,12 @@ public class UserServiceImpl implements IUserService {
             currUserInfo.setNickNameId(userEntity.getNickNameId());
             appTokenRepository.deleteByUserId(userEntity.getId());
 
+            //更新登录时间
             NickName nickName = nickNameRepository.findOne(userEntity.getNickNameId());
             nickName.setUpdateTime(new Date());
             nickNameRepository.save(nickName);
 
-            //生成新的token
+            //生成新的token，新增登录信息
             AppToken appToken=new AppToken();
             appToken.setCreateTime(new Date());
             appToken.setRefreshTime(new Date());
@@ -72,6 +77,7 @@ public class UserServiceImpl implements IUserService {
             appToken.setToken(UUIDUtils.generate());
             appTokenRepository.save(appToken);
 
+            //返回登录结果
             currUserInfo.setToken(appToken.getToken());
             currUserInfo.setIsBlack(userEntity.getBlack());
             ajr.setData(currUserInfo);

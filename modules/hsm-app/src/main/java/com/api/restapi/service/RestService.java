@@ -24,25 +24,25 @@ public class RestService implements IRestService {
 
     @Override
     public <T> ResponseEntity<T> getObject(RestUrlEnum em, Class<T> responseType) throws Exception {
-        String url = restApiProperties.build(em);
+        String url = restApiProperties.build(em, null);
         return asynClientTemplate.getObject(url, responseType);
     }
 
     @Override
     public <T> ResponseEntity<T> getObject(RestUrlEnum em, ParameterizedTypeReference<T> responseType) throws Exception {
-        String url = restApiProperties.build(em);
+        String url = restApiProperties.build(em, null);
         return asynClientTemplate.getObject(url, responseType);
     }
 
     @Override
     public <T> ResponseEntity<T> getObject(RestUrlEnum em, Class<T> responseType, Map<String, ?> uriVariables) throws Exception {
-        String url = restApiProperties.build(em);
-        return asynClientTemplate.getObject(url, responseType, uriVariables);
+        String url = restApiProperties.build(em, uriVariables);
+        return asynClientTemplate.getObject(url, responseType);
     }
 
     @Override
     public <T> ResponseEntity<T> getObject(RestUrlEnum em, ParameterizedTypeReference<T> responseType, Map<String, ?> uriVariables) throws Exception {
-        String url = restApiProperties.build(em);
+        String url = restApiProperties.build(em, null);
         return asynClientTemplate.getObject(url, responseType, uriVariables);
     }
 

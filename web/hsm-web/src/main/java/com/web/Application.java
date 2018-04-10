@@ -32,7 +32,7 @@ public class Application extends SpringBootServletInitializer {
 
     @Override
     public SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        application.sources(WebMvcConfig.class);
+        application.sources(WebMvcConfig.class, SwaggerConfiguration.class);
         return application;
     }
 

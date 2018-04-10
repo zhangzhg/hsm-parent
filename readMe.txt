@@ -10,7 +10,10 @@
         <version>1.5.6</version>
     </dependency>
     spring.boot.admin.url=http://localhost:8181
+--spring boot admin 监控要打成jar，war尝试过不行，也就是直接run Application
 # 生产环境打包用sit.properties，这样不会有debug信息输出
 # 开发的时候，根据条件查询，请用redis缓存减少数据库请求,spring redis缓存主要用来做数据变化不大的业务。
 --
-# 数据实时变化的业务，使用databus进行更新到redis。直接查询即可。取不到的话，再从数据库里面去取。
+# 缓存使用。 一下2种都可以。
+--redis缓存， 用于定时更新的数据。
+--guava缓存， 用于实时更新的数据,请求又非常频繁的时候。原因：能够主动去调用，并且多个线程取同一份数据的时候，不会调用api多次。只会一个区调用，其他等待。

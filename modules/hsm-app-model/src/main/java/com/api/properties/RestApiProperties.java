@@ -4,6 +4,10 @@ import com.api.em.RestUrlEnum;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @ConfigurationProperties(prefix = "api")
@@ -37,7 +41,7 @@ public class RestApiProperties {
         this.secret = secret;
     }
 
-    public String build(RestUrlEnum em) {
+    public String build(RestUrlEnum em, Map<String, ?> uriVariables) {
         StringBuilder builder = new StringBuilder();
         builder.append(url)
                 .append(em.getUrl())
@@ -45,7 +49,20 @@ public class RestApiProperties {
                 .append(this.user)
                 .append("&secret=")
                 .append(this.secret);
+        if (!ObjectUtils.isEmpty(uriVariables)) {
+            uriVariables.forEach((k,v) -> {
+                builder.append("&")
+                .append(k)
+                .append("=")
+                .append(v);
+            });
+        }
+        return builder.toString();
+    }
 
+    public String getRootUrl(RestUrlEnum em) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(url).append(em.getUrl());
         return builder.toString();
     }
 
@@ -56,4 +73,5 @@ public class RestApiProperties {
 
         return builder.toString();
     }
+
 }

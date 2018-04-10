@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
+/**
+ * info：赛事资料相关
+ * 基础数据api调用
+ * 数据本身应该都不是实时的。
+ */
 @Controller
 @RequestMapping("/football/info")
 public class FootballInfoController {
@@ -41,6 +46,33 @@ public class FootballInfoController {
     public ApiJsonResult listTeam() throws Exception {
         ApiJsonResult ajr = new ApiJsonResult();
         ajr.setData(footballInfoService.listTeam());
+        ajr.setResult(ApiJsonResultEnum.SUCCESS);
+        return ajr;
+    }
+
+
+    /**
+     * 足球竞彩关联
+     * 这个接口每天一次的。
+     */
+    @RequestMapping(value="/match/sporttery", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ApiJsonResult listMatchSporttery() throws Exception {
+        ApiJsonResult ajr = new ApiJsonResult();
+        ajr.setData(footballInfoService.listMatchSporttery());
+        ajr.setResult(ApiJsonResultEnum.SUCCESS);
+        return ajr;
+    }
+
+    /**
+     * 24小时内删除的比赛id
+     * 数据量教少，这个实时去取，考虑下是否必要?
+     */
+    @RequestMapping(value="/match/ids/delete", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public ApiJsonResult listMatchIdsDelete() throws Exception {
+        ApiJsonResult ajr = new ApiJsonResult();
+        ajr.setData(footballInfoService.listMatchIdsDelete());
         ajr.setResult(ApiJsonResultEnum.SUCCESS);
         return ajr;
     }

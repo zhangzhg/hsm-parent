@@ -4,6 +4,7 @@ import com.api.em.RestUrlEnum;
 import com.api.restapi.service.IRestService;
 import com.api.vo.FoolballTeam;
 import com.api.vo.FootballMatchEvent;
+import com.api.vo.FootballMatchSporttery;
 import com.framework.core.model.RestTypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,7 +37,7 @@ public class FootballTask implements IFootballTask {
         HashMap map = responseEntity.getBody();
         FootballMatchEvent event = new FootballMatchEvent();
         event.setData(map);
-        redisTemplate.opsForValue().set("scheduledMatchEvent", event);
+        redisTemplate.opsForValue().set(RestUrlEnum.FOOTBALL_MATCH_EVENT.toString(), event);
     }
 
     /**
@@ -51,6 +52,41 @@ public class FootballTask implements IFootballTask {
                 typeRef);
 
         List<FoolballTeam> list = responseEntity.getBody();
-        redisTemplate.opsForValue().set("scheduledTeam", list);
+        redisTemplate.opsForValue().set(RestUrlEnum.FOOTBALL_TEAM.toString(), list);
     }
+
+    @Override
+    @Scheduled(cron = "0 15 0 * * ?")
+    public void scheduledMatchSporttery() throws Exception {
+        RestTypeReference<List<FootballMatchSporttery>> typeRef = new RestTypeReference();
+        ResponseEntity<List<FootballMatchSporttery>> responseEntity = restService.getObject(
+                RestUrlEnum.FOOTBALL_MATCH_SPORTTERY,
+                typeRef);
+
+        List<FootballMatchSporttery> list = responseEntity.getBody();
+        redisTemplate.opsForValue().set(RestUrlEnum.FOOTBALL_MATCH_SPORTTERY.toString(), list);
+    }
+
+    @Override
+    @Scheduled(cron = "0 1 0 * * ?")
+    public void scheduledScore() throws Exception {
+        ResponseEntity<Object> responseEntity = restService.getObject(
+                RestUrlEnum.FOOTBALL_MATCH_SCORE,
+                Object.class);
+
+        Object json = responseEntity.getBody();
+        redisTemplate.opsForValue().set(RestUrlEnum.FOOTBALL_MATCH_SCORE.toString(), json);
+    }
+
+    @Override
+    @Scheduled(cron = "0 1 0 * * ?")
+    public void scheduledOdds() throws Exception {
+        ResponseEntity<Object> responseEntity = restService.getObject(
+                RestUrlEnum.FOOTBALL_MATCH_ODDS,
+                Object.class);
+
+        Object json = responseEntity.getBody();
+        redisTemplate.opsForValue().set(RestUrlEnum.FOOTBALL_MATCH_ODDS.toString(), json);
+    }
+
 }

@@ -4,9 +4,11 @@ import com.api.dto.FootballDto;
 
 import java.util.List;
 
-public interface IFootballService {
+public interface IFootballLiveService {
     /**
      * 查询比赛比分
      */
-    List listScore(FootballDto footballDto);
+    String listScore() throws Exception;
+
+    String listOdd() throws Exception;
 }

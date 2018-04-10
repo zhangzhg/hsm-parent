@@ -26,25 +26,25 @@ public class FootballLiveServiceImpl implements IFootballLiveService {
      * 查询比赛比分（60秒内变化的数据）
      * 又2个接口，一个60秒内的数据，一个是180秒内的数据
      */
-    public String listScore() throws Exception {
+    public Object listScore() throws Exception {
         Object score = redisTemplate.opsForValue().get(RestUrlEnum.FOOTBALL_MATCH_SCORE.toString());
         if (ObjectUtils.isEmpty(score)) {
             footballTask.scheduledScore();
             score = redisTemplate.opsForValue().get(RestUrlEnum.FOOTBALL_MATCH_SCORE.toString());
         }
 
-        return String.valueOf(score);
+        return score;
     }
 
     @Override
-    public String listOdd() throws Exception {
+    public Object listOdd() throws Exception {
         Object odds = redisTemplate.opsForValue().get(RestUrlEnum.FOOTBALL_MATCH_ODDS.toString());
         if (ObjectUtils.isEmpty(odds)) {
             footballTask.scheduledOdds();
             odds = redisTemplate.opsForValue().get(RestUrlEnum.FOOTBALL_MATCH_ODDS.toString());
         }
 
-        return String.valueOf(odds);
+        return odds;
     }
 
 

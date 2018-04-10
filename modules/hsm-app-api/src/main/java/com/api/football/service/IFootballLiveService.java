@@ -8,7 +8,7 @@ public interface IFootballLiveService {
     /**
      * 查询比赛比分
      */
-    String listScore() throws Exception;
+    Object listScore() throws Exception;
 
-    String listOdd() throws Exception;
+    Object listOdd() throws Exception;
 }

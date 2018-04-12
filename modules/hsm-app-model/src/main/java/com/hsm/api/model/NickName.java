@@ -1,9 +1,7 @@
 package com.hsm.api.model;
 
-import com.hsm.api.util.DateUtil;
 import com.framework.common.domain.BaseModel;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import com.hsm.api.util.DateUtil;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -220,26 +218,4 @@ public class NickName extends BaseModel{
 		return this.isSecrecy==1;
 	}
 
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.DEFAULT_STYLE)
-			.append("Id",getId())
-			.append("UserId",getUserId())
-			.append("Name",getName())
-			.append("HeadPic",getHeadPic())
-			.append("ShopId",getShopId())
-			.append("CreaterId",getCreaterId())
-			.append("CreaterName",getCreaterName())
-			.append("CreateTime",getCreateTime())
-			.append("UpdaterId",getUpdaterId())
-			.append("UpdaterName",getUpdaterName())
-			.append("UpdateTime",getUpdateTime())
-			.append("Deleted",getDeleted())
-			.append("IsDefault",getIsDefault())
-			.append("BeFollow",getBeFollow())
-			.append("UpdateNickCount",getUpdateNickCount())
-			.append("ContinuityWinNum",getContinuityWinNum())
-			.append("IsSpeciallyInvite",getIsSpeciallyInvite())
-			.append("IsSecrecy",getIsSecrecy())
-			.toString();
-	}
 }

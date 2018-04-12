@@ -17,3 +17,18 @@
 # 缓存使用。 一下2种都可以。
 --redis缓存， 用于定时更新的数据。
 --guava缓存， 用于实时更新的数据,请求又非常频繁的时候。原因：能够主动去调用，并且多个线程取同一份数据的时候，不会调用api多次。只会一个区调用，其他等待。
+# 开启spring boot admin 可视化监控。
+--只能用Application启动，不能用war启动，否则发现不了client
+--将//@ComponentScan({"com.hsm","com.framework"}) 提取到外面 Application
+--一定要将Application 放到最上层目录下， 否则扫描不到
+--将以下exclusions部分去掉，使用内部tomcat
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.springframework.boot</groupId>-->
+                    <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        </dependency>

@@ -89,7 +89,7 @@ public class User extends BaseModel implements Serializable {
     private Date updateTime;
     //是否删除（0、未删除；1、删除）
     @Column(name = "DELETED")
-    private Boolean deleted;
+    private Integer deleted;
     //昵称ID
     @Column(name = "NICK_NAME_ID")
     private String nickNameId;
@@ -101,13 +101,13 @@ public class User extends BaseModel implements Serializable {
     private String bankBranch;
     //是否绑定银行卡
     @Column(name = "IS_BIND_BANK_CARD")
-    private Boolean isBindBankCard;
+    private Integer isBindBankCard;
     //备注
     @Column(name = "REMARK")
     private String remark;
     //isBlack
     @Column(name = "IS_BLACK")
-    private Boolean isBlack;
+    private Integer isBlack;
 
     public String getId() {
         return id;
@@ -326,11 +326,11 @@ public class User extends BaseModel implements Serializable {
     }
 
     public Boolean getDeleted() {
-        return deleted;
+        return deleted==1;
     }
 
     public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
+        this.deleted = deleted?1:0;
     }
 
     public String getNickNameId() {
@@ -358,11 +358,11 @@ public class User extends BaseModel implements Serializable {
     }
 
     public Boolean getBindBankCard() {
-        return isBindBankCard;
+        return isBindBankCard==1;
     }
 
     public void setBindBankCard(Boolean bindBankCard) {
-        isBindBankCard = bindBankCard;
+        isBindBankCard = bindBankCard?1:0;
     }
 
     public String getRemark() {
@@ -374,10 +374,10 @@ public class User extends BaseModel implements Serializable {
     }
 
     public Boolean getBlack() {
-        return isBlack;
+        return isBlack==1;
     }
 
     public void setBlack(Boolean black) {
-        isBlack = black;
+        isBlack = black?1:0;
     }
 }

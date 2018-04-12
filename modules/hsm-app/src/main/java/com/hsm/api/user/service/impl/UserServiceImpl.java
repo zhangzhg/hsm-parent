@@ -1,27 +1,29 @@
 package com.hsm.api.user.service.impl;
 
 
+import com.framework.common.util.MD5Utils;
 import com.framework.common.util.UUIDUtils;
+import com.framework.core.exception.BusinessException;
 import com.hsm.api.common.ICodeMessage;
 import com.hsm.api.dto.UserDto;
 import com.hsm.api.em.ApiDicDataEnum;
 import com.hsm.api.em.ApiJsonResult;
 import com.hsm.api.em.ApiJsonResultEnum;
-import com.hsm.api.football.repository.AppTokenRepository;
-import com.hsm.api.football.repository.NickNameRepository;
-import com.hsm.api.football.repository.UserRepository;
+import com.hsm.api.football.repository.*;
+import com.hsm.api.football.repository.mybatis.UserDao;
 import com.hsm.api.football.service.IUserService;
-import com.hsm.api.model.AppToken;
-import com.hsm.api.model.NickName;
-import com.hsm.api.model.User;
+import com.hsm.api.model.*;
+import com.hsm.api.properties.HsmProperties;
 import com.hsm.api.vo.ApiCurrUserInfo;
-import com.framework.common.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 @Service("userService")
 public class UserServiceImpl implements IUserService {
@@ -31,41 +33,49 @@ public class UserServiceImpl implements IUserService {
     NickNameRepository nickNameRepository;
     @Autowired
     AppTokenRepository appTokenRepository;
+    @Autowired
+    PurseRepository purseRepository;
+    @Autowired
+    ShopRepository shopRepository;
+    @Autowired
+    HsmProperties hsmProperties;
+    @Autowired
+    UserDao userDao;
 
     /**
      * 登录api接口
      */
     @Override
-    public ICodeMessage login(UserDto user) {
+    public ICodeMessage login(UserDto param) {
         ApiJsonResult ajr=new ApiJsonResult();
         //登录手机号码不能为空
-        if(StringUtils.isEmpty(user.getPhone())||StringUtils.isEmpty(user.getPwd())) {
+        if(StringUtils.isEmpty(param.getPhone())||StringUtils.isEmpty(param.getPwd())) {
             ajr.setResult(ApiJsonResultEnum.LACK_PARAM);
             return ajr;
         }
 
         Integer status = ApiDicDataEnum.REG_SUCCESS.getIntId();
-        User userEntity = userRepository.getByPhoneAndStatus(user.getPhone(), status);
+        User user = userRepository.getByPhoneAndStatus(param.getPhone(), status);
 
         //判断手机号码是否存在，不存在直接返回
-        if(userEntity==null) {
+        if(user==null) {
             ajr.setResult(ApiJsonResultEnum.NO_REGISTER);
             return ajr;
         }
 
         //密码相同的话可以登录
-        if(MD5Utils.encrypt(user.getPwd()).equals(userEntity.getPwd())) {
+        if(MD5Utils.encrypt(param.getPwd()).equals(user.getPwd())) {
             //删除掉上次登录信息
             ApiCurrUserInfo currUserInfo=new ApiCurrUserInfo();
-            currUserInfo.setUserId(userEntity.getId());
-            currUserInfo.setName(userEntity.getName());
-            currUserInfo.setPhone(userEntity.getPhone());
-            currUserInfo.setShopId(userEntity.getShipId());
-            currUserInfo.setNickNameId(userEntity.getNickNameId());
-            appTokenRepository.deleteByUserId(userEntity.getId());
+            currUserInfo.setUserId(user.getId());
+            currUserInfo.setName(user.getName());
+            currUserInfo.setPhone(user.getPhone());
+            currUserInfo.setShopId(user.getShipId());
+            currUserInfo.setNickNameId(user.getNickNameId());
+            appTokenRepository.deleteByUserId(user.getId());
 
             //更新登录时间
-            NickName nickName = nickNameRepository.findOne(userEntity.getNickNameId());
+            NickName nickName = nickNameRepository.findOne(user.getNickNameId());
             nickName.setUpdateTime(new Date());
             nickNameRepository.save(nickName);
 
@@ -73,13 +83,13 @@ public class UserServiceImpl implements IUserService {
             AppToken appToken=new AppToken();
             appToken.setCreateTime(new Date());
             appToken.setRefreshTime(new Date());
-            appToken.setUserId(userEntity.getId());
+            appToken.setUserId(user.getId());
             appToken.setToken(UUIDUtils.generate());
             appTokenRepository.save(appToken);
 
             //返回登录结果
             currUserInfo.setToken(appToken.getToken());
-            currUserInfo.setIsBlack(userEntity.getBlack());
+            currUserInfo.setIsBlack(user.getBlack());
             ajr.setData(currUserInfo);
             ajr.setResult(ApiJsonResultEnum.SUCCESS);
             return ajr;
@@ -87,6 +97,69 @@ public class UserServiceImpl implements IUserService {
             ajr.setResult(ApiJsonResultEnum.ACC_PWD_ERROR);
             return ajr;
         }
+    }
+
+    /**
+     * 验证手机号
+     */
+    @Override
+    public void register(User user) {
+        //更新修改时间
+        user.setUpdateTime(new Date());
+        user.setStatus(ApiDicDataEnum.REG_SUCCESS.getIntId());
+        user.setPwd(MD5Utils.encrypt(user.getPwd()));
+
+        //取出数据库中最大的加1，作为名称
+        DecimalFormat format=new DecimalFormat("yh0000000");
+        int max = userDao.getMaxCountName("yh");
+
+        NickName nickName=new NickName();
+        nickName.setUserId(user.getId());
+        nickName.setIsDefault(true);
+        nickName.setUpdateNickCount(0);
+        nickName.setBeFollow(0);
+        nickName.setIsSpeciallyInvite(false);
+        nickName.setContinuityWinNum(0);
+        nickName.setName(format.format(max));
+        nickName.setHeadPic(hsmProperties.getImg()
+                .concat("default_headpic_")
+                .concat(new Random().nextInt(3)+".png"));
+
+        //设置实体店id，随便取一家
+        List<Shop> shops = shopRepository.findByDeleted(false);
+        if(shops!=null&&shops.size()>0){
+            Shop shop = shops.get(new Random().nextInt(shops.size()));
+            user.setShipId(shop.getId());
+            user.setShopName(shop.getName());
+            nickName.setShopId(shop.getId());
+        }else {
+            throw new BusinessException(ApiJsonResultEnum.NO_SHOP.getMsg());
+        }
+
+        //更新角色
+        nickNameRepository.save(nickName);
+
+        //更新用户
+        user.setNickNameId(nickName.getId());
+        user.setBlack(false);
+        userRepository.save(user);
+
+        //更新钱包
+        Purse purseEntity=new Purse();
+        purseEntity.setBonus(0d);
+        purseEntity.setCreaterId(user.getId());
+        purseEntity.setCreateTime(new Date());
+        purseEntity.setDeleted(false);
+        purseEntity.setPurse(0d);
+        purseEntity.setUpdaterId(user.getId());
+        purseEntity.setUpdateTime(new Date());
+        purseEntity.setUserId(user.getId());
+        purseRepository.save(purseEntity);
+    }
+
+    @Override
+    public User getByPhoneAndStatus(String phone, Integer status) {
+        return userRepository.getByPhoneAndStatus(phone, status);
     }
 
     /**

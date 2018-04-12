@@ -51,7 +51,6 @@
             <artifactId>swagger-bootstrap-ui</artifactId>
         </dependency>
 
-        <!--spring boot admin 监控 引入后就不要引入这个 否则冲突-->
         <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
@@ -67,6 +66,11 @@
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
             <version>1.5.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
     </dependencies>
 

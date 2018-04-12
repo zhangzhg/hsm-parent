@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hsm-app-model</artifactId>
+    <artifactId>hsm-pay</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -19,7 +19,6 @@
             <artifactId>hsm-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

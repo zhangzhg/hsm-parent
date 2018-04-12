@@ -1,4 +1,4 @@
-package com.hsm.api.common;
+package com.hsm.common;
 
 public interface ICodeMessage {
     

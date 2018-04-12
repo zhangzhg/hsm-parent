@@ -10,14 +10,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hsm-app-model</artifactId>
+    <artifactId>hsm-common</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.hsm</groupId>
-            <artifactId>hsm-common</artifactId>
-            <version>${project.version}</version>
+            <artifactId>framework-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hsm</groupId>
+            <artifactId>framework-core</artifactId>
         </dependency>
 
     </dependencies>

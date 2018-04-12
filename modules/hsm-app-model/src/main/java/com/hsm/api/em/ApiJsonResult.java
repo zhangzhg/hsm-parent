@@ -1,6 +1,7 @@
 package com.hsm.api.em;
 
-import com.hsm.api.common.ICodeMessage;
+
+import com.hsm.common.ICodeMessage;
 
 public class ApiJsonResult implements ICodeMessage {
     private String code;

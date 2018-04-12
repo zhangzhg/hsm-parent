@@ -1,13 +1,13 @@
 package com.hsm.api.user.controller;
 
 import com.framework.core.exception.BusinessException;
-import com.hsm.api.common.ICodeMessage;
 import com.hsm.api.dto.UserDto;
 import com.hsm.api.em.ApiDicDataEnum;
 import com.hsm.api.em.ApiJsonResult;
 import com.hsm.api.em.ApiJsonResultEnum;
 import com.hsm.api.football.service.IUserService;
 import com.hsm.api.model.User;
+import com.hsm.common.ICodeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -15,9 +15,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/user")

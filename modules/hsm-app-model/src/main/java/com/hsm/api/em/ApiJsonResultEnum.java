@@ -1,6 +1,7 @@
 package com.hsm.api.em;
 
-import com.hsm.api.common.ICodeMessage;
+
+import com.hsm.common.ICodeMessage;
 
 public enum ApiJsonResultEnum implements ICodeMessage {
 	    FAIL("-1","操作失败"),

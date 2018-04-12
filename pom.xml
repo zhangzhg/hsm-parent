@@ -17,6 +17,7 @@
 
 
 	<modules>
+		<module>modules/hsm-common</module>
 		<module>modules/hsm-app-model</module>
 		<module>modules/hsm-app-api</module>
 		<module>modules/hsm-app</module>

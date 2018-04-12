@@ -22,6 +22,9 @@ public class RestService implements IRestService {
     @Autowired
     AsynClientTemplate asynClientTemplate;
 
+    /**
+     * @param responseType 复杂或者未知类型可以用JSONObject.class
+     */
     @Override
     public <T> ResponseEntity<T> getObject(RestUrlEnum em, Class<T> responseType) throws Exception {
         String url = restApiProperties.build(em, null);

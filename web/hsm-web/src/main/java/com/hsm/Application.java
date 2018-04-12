@@ -1,6 +1,6 @@
-package com.hsm.web;
+package com.hsm;
 
-import com.framework.web.config.WebMvcConfig;
+import com.WebMvcConfig;
 import com.hsm.web.swaggerui.SwaggerConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
